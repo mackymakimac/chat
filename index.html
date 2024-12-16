@@ -130,31 +130,48 @@
             measurementId: "G-KFYK7F3385"
         };
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
+       const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const storage = getStorage(app);
 
-        // References
         const messagesRef = ref(db, "messages");
 
-        // Generate a random name for the participant
-        const username = `User${Math.floor(Math.random() * 1000)}`;
+        // Random username generator
+        const generateRandomName = () => {
+            const colors = ["Red", "Blue", "Green", "Yellow", "Purple"];
+            const animals = ["Tiger", "Lion", "Bear", "Fox", "Wolf"];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const animal = animals[Math.floor(Math.random() * animals.length)];
+            const number = Math.floor(Math.random() * 100);
+            return `${color}${animal}${number}`;
+        };
 
-        // Get elements
+        const username = generateRandomName();
+
+        // Elements
         const messages = document.getElementById("messages");
         const form = document.getElementById("chat-form");
         const input = document.getElementById("message-input");
+        const fileInput = document.getElementById("file-input");
 
         // Listen for new messages
         onChildAdded(messagesRef, (snapshot) => {
             const message = snapshot.val();
             const item = document.createElement("li");
-            item.textContent = `${message.username}: ${message.text}`;
+
+            if (message.imageUrl) {
+                const img = document.createElement("img");
+                img.src = message.imageUrl;
+                item.appendChild(img);
+            } else {
+                item.textContent = `${message.username}: ${message.text}`;
+            }
+
             messages.appendChild(item);
-            messages.scrollTop = messages.scrollHeight; // Auto-scroll
+            messages.scrollTop = messages.scrollHeight;
         });
 
-        // Send a new message
+        // Send text message
         form.addEventListener("submit", (e) => {
             e.preventDefault();
             const text = input.value.trim();
