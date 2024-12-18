@@ -39,13 +39,12 @@
         #messages li {
             padding: 8px;
             border-bottom: 1px solid #ddd;
-        
         }
 
-        #messages img {
-            max-width: 100%;
-            border-radius: 5px;
-            margin-top: 5px;
+        .username {
+            font-weight: bold;
+            color: #4e0ecb;
+            margin-right: 5px;
         }
 
         form {
@@ -112,9 +111,7 @@
         const messagesRef = ref(db, "messages");
 
         // Generate a random name for the participant
-       // const username = `User${Math.floor(Math.random() * 1000)}`;
-
-	 const generateRandomName = () => {
+        const generateRandomName = () => {
             const colors = ["Red", "Blue", "Green", "Yellow", "Purple"];
             const animals = ["Tiger", "Lion", "Bear", "Fox", "Wolf"];
             const color = colors[Math.floor(Math.random() * colors.length)];
@@ -125,7 +122,6 @@
 
         const username = generateRandomName();
 
-
         // Get elements
         const messages = document.getElementById("messages");
         const form = document.getElementById("chat-form");
@@ -135,7 +131,16 @@
         onChildAdded(messagesRef, (snapshot) => {
             const message = snapshot.val();
             const item = document.createElement("li");
-            item.textContent = `${message.username}: ${message.text}`;
+            const userSpan = document.createElement("span");
+            userSpan.textContent = message.username;
+            userSpan.className = "username";
+
+            const textSpan = document.createElement("span");
+            textSpan.textContent = `: ${message.text}`;
+
+            item.appendChild(userSpan);
+            item.appendChild(textSpan);
+
             messages.appendChild(item);
             messages.scrollTop = messages.scrollHeight; // Auto-scroll
         });
@@ -150,7 +155,5 @@
             }
         });
     </script>
-    </script>
 </body>
 </html>
-
